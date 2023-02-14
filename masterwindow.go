@@ -1,13 +1,11 @@
 package gimu
 
 import (
-	"image/color"
-	"log"
-	"time"
-
 	"github.com/coalaura/gimu/nk"
 	"github.com/go-gl/gl/v3.2-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
+	"image/color"
+	"log"
 )
 
 type BuilderFunc func(w *Window)
@@ -33,6 +31,8 @@ type MasterWindow struct {
 	maxElementBuffer int
 	bgColor          nk.Color
 	defaultFont      *nk.Font
+
+	drawCh chan bool
 }
 
 func NewMasterWindow(title string, width, height int, flags MasterWindowFlag) *MasterWindow {
@@ -95,6 +95,10 @@ func (w *MasterWindow) GetDefaultFont() *nk.Font {
 	return w.defaultFont
 }
 
+func (w *MasterWindow) ReDraw() {
+	w.drawCh <- true
+}
+
 func (w *MasterWindow) Main(builder BuilderFunc) {
 	// Load default font
 	w.defaultFont = LoadDefaultFont()
@@ -106,23 +110,24 @@ func (w *MasterWindow) Main(builder BuilderFunc) {
 	}
 
 	for !w.win.ShouldClose() {
-		glfw.PollEvents()
-		nk.NkPlatformNewFrame()
+		select {
+		case <-w.drawCh:
+			glfw.PollEvents()
+			nk.NkPlatformNewFrame()
 
-		builder(&window)
+			builder(&window)
 
-		// Render
-		bg := make([]float32, 4)
-		nk.NkColorFv(bg, w.bgColor)
-		width, height := w.GetSize()
-		gl.Viewport(0, 0, int32(width), int32(height))
-		gl.Clear(gl.COLOR_BUFFER_BIT)
-		gl.ClearColor(bg[0], bg[1], bg[2], bg[3])
-		nk.NkPlatformRender(nk.AntiAliasingOn, w.maxVertexBuffer, w.maxElementBuffer)
-		w.win.SwapBuffers()
-
-		// 30 FPS
-		time.Sleep(time.Second / 30)
+			// Render
+			bg := make([]float32, 4)
+			nk.NkColorFv(bg, w.bgColor)
+			width, height := w.GetSize()
+			gl.Viewport(0, 0, int32(width), int32(height))
+			gl.Clear(gl.COLOR_BUFFER_BIT)
+			gl.ClearColor(bg[0], bg[1], bg[2], bg[3])
+			nk.NkPlatformRender(nk.AntiAliasingOn, w.maxVertexBuffer, w.maxElementBuffer)
+			w.win.SwapBuffers()
+		default:
+		}
 	}
 
 	nk.NkPlatformShutdown()
