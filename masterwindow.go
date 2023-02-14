@@ -75,6 +75,10 @@ func (w *MasterWindow) GetSize() (width, height int) {
 	return gw, gh
 }
 
+func (w *MasterWindow) SetSize(width, height int) {
+	w.win.SetSize(width, height)
+}
+
 func (w *MasterWindow) SetBgColor(color color.RGBA) {
 	w.bgColor = toNkColor(color)
 }
