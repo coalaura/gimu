@@ -6,6 +6,7 @@ import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 	"image/color"
 	"log"
+	"runtime"
 )
 
 type BuilderFunc func(w *Window)
@@ -33,6 +34,8 @@ type MasterWindow struct {
 	defaultFont      *nk.Font
 
 	drawCh chan bool
+
+	Closed chan bool
 }
 
 func NewMasterWindow(title string, width, height int, flags MasterWindowFlag) *MasterWindow {
@@ -100,36 +103,44 @@ func (w *MasterWindow) ReDraw() {
 }
 
 func (w *MasterWindow) Main(builder BuilderFunc) {
-	// Load default font
-	w.defaultFont = LoadDefaultFont()
-	w.GetContext().SetStyle(nk.THEME_DARK)
+	go func() {
+		runtime.LockOSThread()
 
-	window := Window{
-		ctx: w.ctx,
-		mw:  w,
-	}
+		// Load default font
+		w.defaultFont = LoadDefaultFont()
+		w.GetContext().SetStyle(nk.THEME_DARK)
 
-	for !w.win.ShouldClose() {
-		select {
-		case <-w.drawCh:
-			glfw.PollEvents()
-			nk.NkPlatformNewFrame()
-
-			builder(&window)
-
-			// Render
-			bg := make([]float32, 4)
-			nk.NkColorFv(bg, w.bgColor)
-			width, height := w.GetSize()
-			gl.Viewport(0, 0, int32(width), int32(height))
-			gl.Clear(gl.COLOR_BUFFER_BIT)
-			gl.ClearColor(bg[0], bg[1], bg[2], bg[3])
-			nk.NkPlatformRender(nk.AntiAliasingOn, w.maxVertexBuffer, w.maxElementBuffer)
-			w.win.SwapBuffers()
-		default:
+		window := Window{
+			ctx: w.ctx,
+			mw:  w,
 		}
-	}
 
-	nk.NkPlatformShutdown()
-	glfw.Terminate()
+		for !w.win.ShouldClose() {
+			select {
+			case <-w.drawCh:
+				glfw.PollEvents()
+				nk.NkPlatformNewFrame()
+
+				builder(&window)
+
+				// Render
+				bg := make([]float32, 4)
+				nk.NkColorFv(bg, w.bgColor)
+				width, height := w.GetSize()
+				gl.Viewport(0, 0, int32(width), int32(height))
+				gl.Clear(gl.COLOR_BUFFER_BIT)
+				gl.ClearColor(bg[0], bg[1], bg[2], bg[3])
+				nk.NkPlatformRender(nk.AntiAliasingOn, w.maxVertexBuffer, w.maxElementBuffer)
+				w.win.SwapBuffers()
+			default:
+			}
+		}
+
+		nk.NkPlatformShutdown()
+		glfw.Terminate()
+
+		w.Closed <- true
+	}()
+
+	w.ReDraw()
 }
