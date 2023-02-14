@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"image/color"
 
-	"github.com/AllenDang/gimu/nk"
+	"github.com/coalaura/gimu/nk"
 )
 
 type Window struct {

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/AllenDang/gimu"
-	"github.com/AllenDang/gimu/nk"
+	"github.com/coalaura/gimu"
+	"github.com/coalaura/gimu/nk"
 )
 
 var (

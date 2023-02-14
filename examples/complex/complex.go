@@ -3,8 +3,8 @@ package main
 import (
 	"runtime"
 
-	"github.com/AllenDang/gimu"
-	"github.com/AllenDang/gimu/nk"
+	"github.com/coalaura/gimu"
+	"github.com/coalaura/gimu/nk"
 )
 
 func builder(w *gimu.Window) {

@@ -6,7 +6,7 @@ import (
 	"image/draw"
 	"unsafe"
 
-	"github.com/AllenDang/gimu/nk"
+	"github.com/coalaura/gimu/nk"
 )
 
 func toNkFlag(align string) nk.Flags {

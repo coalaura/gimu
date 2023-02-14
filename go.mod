@@ -1,4 +1,4 @@
-module github.com/AllenDang/gimu
+module github.com/coalaura/gimu
 
 go 1.13
 

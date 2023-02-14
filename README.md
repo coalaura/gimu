@@ -14,9 +14,9 @@ This package provides a go-style idiomatic wrapper for nuklear.
 
 ## Screenshots
 
-<img src="https://github.com/AllenDang/gimu/blob/master/examples/screenshots.png" alt="Simple demo screen shots" width="800"/>
+<img src="https://github.com/coalaura/gimu/blob/master/examples/screenshots.png" alt="Simple demo screen shots" width="800"/>
 
-<img src="https://github.com/AllenDang/gimu/blob/master/examples/screenshots2.png" alt="Chart demo screen shots" width="800"/>
+<img src="https://github.com/coalaura/gimu/blob/master/examples/screenshots2.png" alt="Chart demo screen shots" width="800"/>
 
 ## Overview
 
@@ -34,7 +34,7 @@ The desktop support is achieved using [GLFW](https://github.com/go-gl/glfw) and 
 Just go get it and everythings ready to work.
 
 ```
-go get -u github.com/AllenDang/gimu
+go get -u github.com/coalaura/gimu
 ```
 
 ### Getting start
@@ -49,7 +49,7 @@ import (
   "image"
   "runtime"
 
-  "github.com/AllenDang/gimu"
+  "github.com/coalaura/gimu"
 )
 
 func builder(w *gimu.Window) {
@@ -87,7 +87,7 @@ Save and run.
 gimu provides a tool to pack compiled executable for several platform to enable app icon and etc.
 
 ```
-go get -u github.com/AllenDang/gimu/cmd/gmdeploy
+go get -u github.com/coalaura/gimu/cmd/gmdeploy
 ```
 
 Run gmdeploy in your project folder.
